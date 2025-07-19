@@ -13,12 +13,17 @@ export class StopsController {
   }
 
   @Post('/api/rute')
-  async findAll(@Body() findRouteDto: FindRouteDto) {
+  async findRoute(@Body() findRouteDto: FindRouteDto) {
     return await this.stopsService.findRoute(findRouteDto);
   }
 
   @Get('/generate-grid')
   generateGrid() {
     return this.stopsService.generateGrid();
+  }
+
+  @Get('/all')
+  async findAll() {
+    return await this.stopsService.findAll();
   }
 }

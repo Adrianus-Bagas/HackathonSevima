@@ -51,6 +51,7 @@ export class StopsService {
     return {
       statusCode: HttpStatus.OK,
       message: 'Get all stops success',
+      result: getAllStops
     };
   }
 
@@ -65,7 +66,7 @@ export class StopsService {
     }
     return {
       statusCode: HttpStatus.OK,
-      message: gridResult,
+      grid: gridResult,
     };
   }
 
