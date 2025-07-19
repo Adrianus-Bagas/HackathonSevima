@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus } from "@nestjs/common";
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 const ROW: number = 20;
 const COL: number = 20;
@@ -67,7 +67,7 @@ const tracePath = (
   let col = dest[1];
 
   // stack<Pair> Path;
-  const Path: any[] = [];
+  const Path: number[][] = [];
 
   while (
     !(
@@ -114,12 +114,18 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
     isUnBlocked(grid, src[0], src[1]) == false ||
     isUnBlocked(grid, dest[0], dest[1]) == false
   ) {
-    throw new HttpException('Source or the destination is blocked', HttpStatus.BAD_REQUEST);
+    throw new HttpException(
+      'Source or the destination is blocked',
+      HttpStatus.BAD_REQUEST,
+    );
   }
 
   // If the destination cell is the same as source cell
   if (isDestination(src[0], src[1], dest) == true) {
-    throw new HttpException('We are already at the destination', HttpStatus.BAD_REQUEST);
+    throw new HttpException(
+      'We are already at the destination',
+      HttpStatus.BAD_REQUEST,
+    );
   }
 
   // Create a closed list and initialise it to false which
@@ -628,7 +634,11 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
   // reach the destination cell. This may happen when the
   // there is no way to destination cell (due to
   // blockages)
-  if (foundDest == false) throw new HttpException('Failed to find the Destination Cell', HttpStatus.BAD_REQUEST);
+  if (foundDest == false)
+    throw new HttpException(
+      'Failed to find the Destination Cell',
+      HttpStatus.BAD_REQUEST,
+    );
 };
 
 export { aStarSearch };
