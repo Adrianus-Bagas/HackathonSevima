@@ -85,27 +85,33 @@ export class StopsService {
     if (!getArrivalCoordinate || !getDepartureCoordinate) {
       throw new HttpException('Stops not found', HttpStatus.BAD_REQUEST);
     }
-    
+
     const path = aStarSearch(
       findRouteDto.grid,
       [getDepartureCoordinate.x_axis, getDepartureCoordinate.y_axis],
       [getArrivalCoordinate.x_axis, getArrivalCoordinate.y_axis],
     );
 
-    if(!path) {
-      throw new HttpException('Stops cannot be accessed', HttpStatus.BAD_REQUEST)
+    if (!path) {
+      throw new HttpException(
+        'Stops cannot be accessed',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     let distance: number = 0;
-    
-    for(let i=0;i<path.length-1;i++) {
-      distance += Math.sqrt(((path[i][0]-path[i+1][0]) * (path[i][0]-path[i+1][0])) + (path[i][1]-path[i+1][1]) * (path[i][1]-path[i+1][1]));
+
+    for (let i = 0; i < path.length - 1; i++) {
+      distance += Math.sqrt(
+        (path[i][0] - path[i + 1][0]) * (path[i][0] - path[i + 1][0]) +
+          (path[i][1] - path[i + 1][1]) * (path[i][1] - path[i + 1][1]),
+      );
     }
 
     return {
       statusCode: HttpStatus.OK,
       path,
-      distance: distance.toFixed(2)+" km"
-    }
+      distance: distance.toFixed(2) + ' km',
+    };
   }
 }

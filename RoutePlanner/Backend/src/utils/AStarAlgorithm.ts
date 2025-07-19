@@ -211,8 +211,6 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
     let hNew: number = 0;
     let fNew: number = 0;
 
-    let totalDistance: number = 0;
-
     //----------- 1st Successor (North) ------------
 
     // Only process this cell if this is a valid one
@@ -235,7 +233,6 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
       ) {
         gNew = cellDetails[i][j].g + 1;
         hNew = calculateHValue(i - 1, j, dest);
-        totalDistance += hNew;
         fNew = gNew + hNew;
 
         // If it isn’t on the open list, add it to
@@ -284,7 +281,6 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
       ) {
         gNew = cellDetails[i][j].g + 1;
         hNew = calculateHValue(i + 1, j, dest);
-        totalDistance += hNew;
         fNew = gNew + hNew;
 
         // If it isn’t on the open list, add it to
@@ -333,7 +329,6 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
       ) {
         gNew = cellDetails[i][j].g + 1;
         hNew = calculateHValue(i, j + 1, dest);
-        totalDistance += hNew;
         fNew = gNew + hNew;
 
         // If it isn’t on the open list, add it to
@@ -383,7 +378,6 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
       ) {
         gNew = cellDetails[i][j].g + 1;
         hNew = calculateHValue(i, j - 1, dest);
-        totalDistance += hNew;
         fNew = gNew + hNew;
 
         // If it isn’t on the open list, add it to
@@ -434,7 +428,6 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
       ) {
         gNew = cellDetails[i][j].g + 1.414;
         hNew = calculateHValue(i - 1, j + 1, dest);
-        totalDistance += hNew;
         fNew = gNew + hNew;
 
         // If it isn’t on the open list, add it to
@@ -485,7 +478,6 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
       ) {
         gNew = cellDetails[i][j].g + 1.414;
         hNew = calculateHValue(i - 1, j - 1, dest);
-        totalDistance += hNew;
         fNew = gNew + hNew;
 
         // If it isn’t on the open list, add it to
@@ -535,7 +527,6 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
       ) {
         gNew = cellDetails[i][j].g + 1.414;
         hNew = calculateHValue(i + 1, j + 1, dest);
-        totalDistance += hNew;
         fNew = gNew + hNew;
 
         // If it isn’t on the open list, add it to
@@ -586,7 +577,6 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
       ) {
         gNew = cellDetails[i][j].g + 1.414;
         hNew = calculateHValue(i + 1, j - 1, dest);
-        totalDistance += hNew;
         fNew = gNew + hNew;
 
         // If it isn’t on the open list, add it to
