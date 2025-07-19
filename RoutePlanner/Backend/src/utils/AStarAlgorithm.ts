@@ -31,14 +31,14 @@ const isValid = (row: number, col: number) => {
 // blocked or not
 const isUnBlocked = (grid: number[][], row: number, col: number) => {
   // Returns true if the cell is not blocked else false
-  if (grid[row][col] == 1) return true;
+  if (grid[row][col] === 1) return true;
   else return false;
 };
 
 // A Utility Function to check whether destination cell has
 // been reached or not
 const isDestination = (row: number, col: number, dest: number[]) => {
-  if (row == dest[0] && col == dest[1]) return true;
+  if (row === dest[0] && col === dest[1]) return true;
   else return false;
 };
 
@@ -62,7 +62,6 @@ const tracePath = (
   }[][],
   dest: number[],
 ) => {
-  console.log('The Path is ');
   let row = dest[0];
   let col = dest[1];
 
@@ -71,8 +70,8 @@ const tracePath = (
 
   while (
     !(
-      cellDetails[row][col].parent_i == row &&
-      cellDetails[row][col].parent_j == col
+      cellDetails[row][col].parent_i === row &&
+      cellDetails[row][col].parent_j === col
     )
   ) {
     Path.push([row, col]);
@@ -83,16 +82,8 @@ const tracePath = (
   }
 
   Path.push([row, col]);
-  while (Path.length > 0) {
-    const p = Path[0];
-    Path.shift();
 
-    if (p[0] == 2 || p[0] == 1) {
-      console.log('-> (' + p[0] + ', ' + (p[1] - 1) + ')');
-    } else console.log('-> (' + p[0] + ', ' + p[1] + ')');
-  }
-
-  return;
+  return Path;
 };
 
 // A Function to find the shortest path between
@@ -100,19 +91,19 @@ const tracePath = (
 // to A* Search Algorithm
 const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
   // If the source is out of range
-  if (isValid(src[0], src[1]) == false) {
+  if (isValid(src[0], src[1]) === false) {
     throw new HttpException('Source is invalid', HttpStatus.BAD_REQUEST);
   }
 
   // If the destination is out of range
-  if (isValid(dest[0], dest[1]) == false) {
+  if (isValid(dest[0], dest[1]) === false) {
     throw new HttpException('Destination is invalid', HttpStatus.BAD_REQUEST);
   }
 
   // Either the source or the destination is blocked
   if (
-    isUnBlocked(grid, src[0], src[1]) == false ||
-    isUnBlocked(grid, dest[0], dest[1]) == false
+    isUnBlocked(grid, src[0], src[1]) === false ||
+    isUnBlocked(grid, dest[0], dest[1]) === false
   ) {
     throw new HttpException(
       'Source or the destination is blocked',
@@ -121,7 +112,7 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
   }
 
   // If the destination cell is the same as source cell
-  if (isDestination(src[0], src[1], dest) == true) {
+  if (isDestination(src[0], src[1], dest) === true) {
     throw new HttpException(
       'We are already at the destination',
       HttpStatus.BAD_REQUEST,
@@ -216,34 +207,35 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
          S.W--> South-West  (i+1, j-1)*/
 
     // To store the 'g', 'h' and 'f' of the 8 successors
-    let gNew: number;
-    let hNew: number;
-    let fNew: number;
+    let gNew: number = 0;
+    let hNew: number = 0;
+    let fNew: number = 0;
+
+    let totalDistance: number = 0;
 
     //----------- 1st Successor (North) ------------
 
     // Only process this cell if this is a valid one
-    if (isValid(i - 1, j) == true) {
+    if (isValid(i - 1, j) === true) {
       // If the destination cell is the same as the
       // current successor
-      if (isDestination(i - 1, j, dest) == true) {
+      if (isDestination(i - 1, j, dest) === true) {
         // Set the Parent of the destination cell
         cellDetails[i - 1][j].parent_i = i;
         cellDetails[i - 1][j].parent_j = j;
-        console.log('The destination cell is found\n');
-        tracePath(cellDetails, dest);
         foundDest = true;
-        return;
+        return tracePath(cellDetails, dest);
       }
       // If the successor is already on the closed
       // list or if it is blocked, then ignore it.
       // Else do the following
       else if (
-        closedList[i - 1][j] == false &&
-        isUnBlocked(grid, i - 1, j) == true
+        closedList[i - 1][j] === false &&
+        isUnBlocked(grid, i - 1, j) === true
       ) {
         gNew = cellDetails[i][j].g + 1;
         hNew = calculateHValue(i - 1, j, dest);
+        totalDistance += hNew;
         fNew = gNew + hNew;
 
         // If it isn’t on the open list, add it to
@@ -255,7 +247,7 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
         // to see if this path to that square is
         // better, using 'f' cost as the measure.
         if (
-          cellDetails[i - 1][j].f == 2147483647 ||
+          cellDetails[i - 1][j].f === 2147483647 ||
           cellDetails[i - 1][j].f > fNew
         ) {
           openList.set(fNew, [i - 1, j]);
@@ -273,27 +265,26 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
     //----------- 2nd Successor (South) ------------
 
     // Only process this cell if this is a valid one
-    if (isValid(i + 1, j) == true) {
+    if (isValid(i + 1, j) === true) {
       // If the destination cell is the same as the
       // current successor
-      if (isDestination(i + 1, j, dest) == true) {
+      if (isDestination(i + 1, j, dest) === true) {
         // Set the Parent of the destination cell
         cellDetails[i + 1][j].parent_i = i;
         cellDetails[i + 1][j].parent_j = j;
-        console.log('The destination cell is found\n');
-        tracePath(cellDetails, dest);
         foundDest = true;
-        return;
+        return tracePath(cellDetails, dest);
       }
       // If the successor is already on the closed
       // list or if it is blocked, then ignore it.
       // Else do the following
       else if (
-        closedList[i + 1][j] == false &&
-        isUnBlocked(grid, i + 1, j) == true
+        closedList[i + 1][j] === false &&
+        isUnBlocked(grid, i + 1, j) === true
       ) {
         gNew = cellDetails[i][j].g + 1;
         hNew = calculateHValue(i + 1, j, dest);
+        totalDistance += hNew;
         fNew = gNew + hNew;
 
         // If it isn’t on the open list, add it to
@@ -305,7 +296,7 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
         // to see if this path to that square is
         // better, using 'f' cost as the measure.
         if (
-          cellDetails[i + 1][j].f == 2147483647 ||
+          cellDetails[i + 1][j].f === 2147483647 ||
           cellDetails[i + 1][j].f > fNew
         ) {
           openList.set(fNew, [i + 1, j]);
@@ -322,28 +313,27 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
     //----------- 3rd Successor (East) ------------
 
     // Only process this cell if this is a valid one
-    if (isValid(i, j + 1) == true) {
+    if (isValid(i, j + 1) === true) {
       // If the destination cell is the same as the
       // current successor
-      if (isDestination(i, j + 1, dest) == true) {
+      if (isDestination(i, j + 1, dest) === true) {
         // Set the Parent of the destination cell
         cellDetails[i][j + 1].parent_i = i;
         cellDetails[i][j + 1].parent_j = j;
-        console.log('The destination cell is found\n');
-        tracePath(cellDetails, dest);
         foundDest = true;
-        return;
+        return tracePath(cellDetails, dest);
       }
 
       // If the successor is already on the closed
       // list or if it is blocked, then ignore it.
       // Else do the following
       else if (
-        closedList[i][j + 1] == false &&
-        isUnBlocked(grid, i, j + 1) == true
+        closedList[i][j + 1] === false &&
+        isUnBlocked(grid, i, j + 1) === true
       ) {
         gNew = cellDetails[i][j].g + 1;
         hNew = calculateHValue(i, j + 1, dest);
+        totalDistance += hNew;
         fNew = gNew + hNew;
 
         // If it isn’t on the open list, add it to
@@ -355,7 +345,7 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
         // to see if this path to that square is
         // better, using 'f' cost as the measure.
         if (
-          cellDetails[i][j + 1].f == 2147483647 ||
+          cellDetails[i][j + 1].f === 2147483647 ||
           cellDetails[i][j + 1].f > fNew
         ) {
           openList.set(fNew, [i, j + 1]);
@@ -373,28 +363,27 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
     //----------- 4th Successor (West) ------------
 
     // Only process this cell if this is a valid one
-    if (isValid(i, j - 1) == true) {
+    if (isValid(i, j - 1) === true) {
       // If the destination cell is the same as the
       // current successor
-      if (isDestination(i, j - 1, dest) == true) {
+      if (isDestination(i, j - 1, dest) === true) {
         // Set the Parent of the destination cell
         cellDetails[i][j - 1].parent_i = i;
         cellDetails[i][j - 1].parent_j = j;
-        console.log('The destination cell is found\n');
-        tracePath(cellDetails, dest);
         foundDest = true;
-        return;
+        return tracePath(cellDetails, dest);
       }
 
       // If the successor is already on the closed
       // list or if it is blocked, then ignore it.
       // Else do the following
       else if (
-        closedList[i][j - 1] == false &&
-        isUnBlocked(grid, i, j - 1) == true
+        closedList[i][j - 1] === false &&
+        isUnBlocked(grid, i, j - 1) === true
       ) {
         gNew = cellDetails[i][j].g + 1;
         hNew = calculateHValue(i, j - 1, dest);
+        totalDistance += hNew;
         fNew = gNew + hNew;
 
         // If it isn’t on the open list, add it to
@@ -406,7 +395,7 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
         // to see if this path to that square is
         // better, using 'f' cost as the measure.
         if (
-          cellDetails[i][j - 1].f == 2147483647 ||
+          cellDetails[i][j - 1].f === 2147483647 ||
           cellDetails[i][j - 1].f > fNew
         ) {
           openList.set(fNew, [i, j - 1]);
@@ -425,28 +414,27 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
     //------------
 
     // Only process this cell if this is a valid one
-    if (isValid(i - 1, j + 1) == true) {
+    if (isValid(i - 1, j + 1) === true) {
       // If the destination cell is the same as the
       // current successor
-      if (isDestination(i - 1, j + 1, dest) == true) {
+      if (isDestination(i - 1, j + 1, dest) === true) {
         // Set the Parent of the destination cell
         cellDetails[i - 1][j + 1].parent_i = i;
         cellDetails[i - 1][j + 1].parent_j = j;
-        console.log('The destination cell is found\n');
-        tracePath(cellDetails, dest);
         foundDest = true;
-        return;
+        return tracePath(cellDetails, dest);
       }
 
       // If the successor is already on the closed
       // list or if it is blocked, then ignore it.
       // Else do the following
       else if (
-        closedList[i - 1][j + 1] == false &&
-        isUnBlocked(grid, i - 1, j + 1) == true
+        closedList[i - 1][j + 1] === false &&
+        isUnBlocked(grid, i - 1, j + 1) === true
       ) {
         gNew = cellDetails[i][j].g + 1.414;
         hNew = calculateHValue(i - 1, j + 1, dest);
+        totalDistance += hNew;
         fNew = gNew + hNew;
 
         // If it isn’t on the open list, add it to
@@ -458,7 +446,7 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
         // to see if this path to that square is
         // better, using 'f' cost as the measure.
         if (
-          cellDetails[i - 1][j + 1].f == 2147483647 ||
+          cellDetails[i - 1][j + 1].f === 2147483647 ||
           cellDetails[i - 1][j + 1].f > fNew
         ) {
           openList.set(fNew, [i - 1, j + 1]);
@@ -477,28 +465,27 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
     //------------
 
     // Only process this cell if this is a valid one
-    if (isValid(i - 1, j - 1) == true) {
+    if (isValid(i - 1, j - 1) === true) {
       // If the destination cell is the same as the
       // current successor
-      if (isDestination(i - 1, j - 1, dest) == true) {
+      if (isDestination(i - 1, j - 1, dest) === true) {
         // Set the Parent of the destination cell
         cellDetails[i - 1][j - 1].parent_i = i;
         cellDetails[i - 1][j - 1].parent_j = j;
-        console.log('The destination cell is found\n');
-        tracePath(cellDetails, dest);
         foundDest = true;
-        return;
+        return tracePath(cellDetails, dest);
       }
 
       // If the successor is already on the closed
       // list or if it is blocked, then ignore it.
       // Else do the following
       else if (
-        closedList[i - 1][j - 1] == false &&
-        isUnBlocked(grid, i - 1, j - 1) == true
+        closedList[i - 1][j - 1] === false &&
+        isUnBlocked(grid, i - 1, j - 1) === true
       ) {
         gNew = cellDetails[i][j].g + 1.414;
         hNew = calculateHValue(i - 1, j - 1, dest);
+        totalDistance += hNew;
         fNew = gNew + hNew;
 
         // If it isn’t on the open list, add it to
@@ -510,7 +497,7 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
         // to see if this path to that square is
         // better, using 'f' cost as the measure.
         if (
-          cellDetails[i - 1][j - 1].f == 2147483647 ||
+          cellDetails[i - 1][j - 1].f === 2147483647 ||
           cellDetails[i - 1][j - 1].f > fNew
         ) {
           openList.set(fNew, [i - 1, j - 1]);
@@ -528,28 +515,27 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
     //------------
 
     // Only process this cell if this is a valid one
-    if (isValid(i + 1, j + 1) == true) {
+    if (isValid(i + 1, j + 1) === true) {
       // If the destination cell is the same as the
       // current successor
-      if (isDestination(i + 1, j + 1, dest) == true) {
+      if (isDestination(i + 1, j + 1, dest) === true) {
         // Set the Parent of the destination cell
         cellDetails[i + 1][j + 1].parent_i = i;
         cellDetails[i + 1][j + 1].parent_j = j;
-        console.log('The destination cell is found\n');
-        tracePath(cellDetails, dest);
         foundDest = true;
-        return;
+        return tracePath(cellDetails, dest);
       }
 
       // If the successor is already on the closed
       // list or if it is blocked, then ignore it.
       // Else do the following
       else if (
-        closedList[i + 1][j + 1] == false &&
-        isUnBlocked(grid, i + 1, j + 1) == true
+        closedList[i + 1][j + 1] === false &&
+        isUnBlocked(grid, i + 1, j + 1) === true
       ) {
         gNew = cellDetails[i][j].g + 1.414;
         hNew = calculateHValue(i + 1, j + 1, dest);
+        totalDistance += hNew;
         fNew = gNew + hNew;
 
         // If it isn’t on the open list, add it to
@@ -561,7 +547,7 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
         // to see if this path to that square is
         // better, using 'f' cost as the measure.
         if (
-          cellDetails[i + 1][j + 1].f == 2147483647 ||
+          cellDetails[i + 1][j + 1].f === 2147483647 ||
           cellDetails[i + 1][j + 1].f > fNew
         ) {
           openList.set(fNew, [i + 1, j + 1]);
@@ -580,28 +566,27 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
     //------------
 
     // Only process this cell if this is a valid one
-    if (isValid(i + 1, j - 1) == true) {
+    if (isValid(i + 1, j - 1) === true) {
       // If the destination cell is the same as the
       // current successor
-      if (isDestination(i + 1, j - 1, dest) == true) {
+      if (isDestination(i + 1, j - 1, dest) === true) {
         // Set the Parent of the destination cell
         cellDetails[i + 1][j - 1].parent_i = i;
         cellDetails[i + 1][j - 1].parent_j = j;
-        console.log('The destination cell is found\n');
-        tracePath(cellDetails, dest);
         foundDest = true;
-        return;
+        return tracePath(cellDetails, dest);
       }
 
       // If the successor is already on the closed
       // list or if it is blocked, then ignore it.
       // Else do the following
       else if (
-        closedList[i + 1][j - 1] == false &&
-        isUnBlocked(grid, i + 1, j - 1) == true
+        closedList[i + 1][j - 1] === false &&
+        isUnBlocked(grid, i + 1, j - 1) === true
       ) {
         gNew = cellDetails[i][j].g + 1.414;
         hNew = calculateHValue(i + 1, j - 1, dest);
+        totalDistance += hNew;
         fNew = gNew + hNew;
 
         // If it isn’t on the open list, add it to
@@ -613,7 +598,7 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
         // to see if this path to that square is
         // better, using 'f' cost as the measure.
         if (
-          cellDetails[i + 1][j - 1].f == 2147483647 ||
+          cellDetails[i + 1][j - 1].f === 2147483647 ||
           cellDetails[i + 1][j - 1].f > fNew
         ) {
           openList.set(fNew, [i + 1, j - 1]);
@@ -634,7 +619,7 @@ const aStarSearch = (grid: number[][], src: number[], dest: number[]) => {
   // reach the destination cell. This may happen when the
   // there is no way to destination cell (due to
   // blockages)
-  if (foundDest == false)
+  if (foundDest === false)
     throw new HttpException(
       'Failed to find the Destination Cell',
       HttpStatus.BAD_REQUEST,
